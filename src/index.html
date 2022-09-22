@@ -38,13 +38,16 @@
     <div class="container-fluid" style="margin-top:1em;">
       <div class="row">
         <div class="col-md-7">
+          Please use the following interface to explore the RDF data based on the existing classes, their relations and specific filters.<br />
           <div id="ui-search"></div>
         </div>
         <div class="col-md-5">
           <div class="row" style="margin-bottom:0.5em;">
             <div class="col-md-12">
+              Here you see a prefilled SPARQL query. <br />Either you execute it and see the results <i>(should be the one of the the datasets which linked to here)</i> <br />&nbsp;&nbsp;&nbsp;or you use the GUI on the left to explore the RDF data <br />&nbsp;&nbsp;&nbsp;or you change the SPARQL query by yourself.
+              <br />
              <span style="font-size:90%;">
-             The endpoint is <a id="endpoint" href="http://localhost:8642/sparql">http://localhost:8642/sparql</a>
+             The endpoint used is <a id="endpoint" href="http://vm188067-l3s.hosting.uni-hannover.de:7200/repositories/Nomad">http://vm188067-l3s.hosting.uni-hannover.de:7200/repositories/Nomad</a>
              </span>
             </div>
           </div>
@@ -128,12 +131,13 @@
     },
     //classes
     {
-      "@id" : "http://stream-ontology.com/matvoc#Formula",
+      "@id" : "http://stream-ontology.com/matvoc-core/Formula",
       "@type" : "Class",
       "label": [
         {"@value" : "Formula", "@language" : "en"}
       ],
-      "faIcon":  "fas fa-sticky-note"
+      "faIcon":  "fas fa-sticky-note",
+      "defaultLabelProperty": "http://labs.sparna.fr/sparnatural-demo-dbpedia/onto#auto_label"
     },
     {
       "@id" : "http://www.w3.org/ns/sosa/FeatureOfInterest",
@@ -141,7 +145,8 @@
       "label": [
         {"@value" : "FeatureOfInterest", "@language" : "en"}
       ],
-      "faIcon":  "fas fa-thumbtack"
+      "faIcon":  "fas fa-thumbtack",
+      "defaultLabelProperty": "http://labs.sparna.fr/sparnatural-demo-dbpedia/onto#auto_label"
     },
     {
       "@id" : "http://www.w3.org/ns/sosa/Sample",
@@ -153,14 +158,21 @@
       "defaultLabelProperty": "http://labs.sparna.fr/sparnatural-demo-dbpedia/onto#auto_label"
     },
     {
-      "@id" : "http://labs.sparna.fr/sparnatural-demo-dbpedia/onto#auto_label",
-      "@type" : "ObjectProperty",
-      "subPropertyOf" : "sparnatural:NonSelectableProperty",
+      "@id" : "http://www.w3.org/ns/sosa/Sampling",
+      "@type" : "Class",
       "label": [
-        {"@value" : "name","@language" : "en"}
+        {"@value" : "Sampling", "@language" : "en"}
       ],
-      "sparqlString": "rdfs:label",
-      "range": "http://labs.sparna.fr/sparnatural-demo-dbpedia/onto#Text"
+      "faIcon":  "fas fa-flask"
+    },
+    {
+      "@id" : "http://www.w3.org/ns/sosa/Sampler",
+      "@type" : "Class",
+      "label": [
+        {"@value" : "Sampler", "@language" : "en"}
+      ],
+      "faIcon":  "fas fa-vials",
+      "defaultLabelProperty": "http://labs.sparna.fr/sparnatural-demo-dbpedia/onto#auto_label"
     },
     {
       "@id" : "http://labs.sparna.fr/sparnatural-demo-dbpedia/onto#Search",
@@ -200,9 +212,20 @@
 
     //ObjectProperties
     {
+      "@id" : "http://labs.sparna.fr/sparnatural-demo-dbpedia/onto#auto_label",
+      "@type" : "ObjectProperty",
+      "subPropertyOf" : "sparnatural:NonSelectableProperty",
+      "label": [
+        {"@value" : "name","@language" : "en"}
+      ],
+      "sparqlString": "rdfs:label",
+      "range": "http://labs.sparna.fr/sparnatural-demo-dbpedia/onto#Text"
+    },
+    {
       "@id" : "http://https://nomad-coe.eu/ontology#has_formula",
       "@type" : "ObjectProperty",
       "subPropertyOf" : "sparnatural:ListProperty",
+      "datasource": "datasources:list_rdfslabel_count",
       "label": [
         {"@value" : "has formula","@language" : "en"}
       ],
@@ -210,13 +233,14 @@
         {"@value" : "A sample has a formula","@language" : "en"}
       ],
       "domain": "http://www.w3.org/ns/sosa/Sample",
-      "range": "http://stream-ontology.com/matvoc#Formula",
+      "range": "http://stream-ontology.com/matvoc-core/Formula",
       "enableNegation": true
     },
     {
       "@id" : "http://labs.sparna.fr/sparnatural-demo-dbpedia/onto#has_sample",
       "@type" : "ObjectProperty",
       "subPropertyOf" : "sparnatural:ListProperty",
+      "datasource": "datasources:list_rdfslabel_count",
       "label": [
         {"@value" : "relates to sample","@language" : "en"}
       ],
@@ -227,7 +251,7 @@
         "@type" : "Class",
         "unionOf" : {
           "@list" : [
-            { "@id" : "http://stream-ontology.com/matvoc#Formula"},
+            { "@id" : "http://stream-ontology.com/matvoc-core/Formula"},
             { "@id" : "http://www.w3.org/ns/sosa/FeatureOfInterest"}
           ]
         }
@@ -239,6 +263,7 @@
       "@id" : "http://www.w3.org/ns/sosa/isSampleOf",
       "@type" : "ObjectProperty",
       "subPropertyOf" : "sparnatural:ListProperty",
+      "datasource": "datasources:list_rdfslabel_alpha",
       "label": [
         {"@value" : "is sample of","@language" : "en"}
       ],
@@ -247,6 +272,21 @@
       ],
       "domain": "http://www.w3.org/ns/sosa/Sample",
       "range": "http://www.w3.org/ns/sosa/FeatureOfInterest",
+      "enableNegation": true
+    },
+    {
+      "@id" : "http://www.w3.org/ns/sosa/isResultOf",
+      "@type" : "ObjectProperty",
+      "subPropertyOf" : "sparnatural:ListProperty",
+      "datasource": "datasources:list_rdfslabel_alpha",
+      "label": [
+        {"@value" : "is result of","@language" : "en"}
+      ],
+      "tooltip": [
+        {"@value" : "Link to the sampling","@language" : "en"}
+      ],
+      "domain": "http://www.w3.org/ns/sosa/Sample",
+      "range": "http://www.w3.org/ns/sosa/Sampling",
       "enableNegation": true
     },
     {
@@ -260,9 +300,10 @@
         "@type" : "Class",
         "unionOf" : {
           "@list" : [
-            { "@id" : "http://stream-ontology.com/matvoc#Formula"},
+            { "@id" : "http://stream-ontology.com/matvoc-core/Formula"},
             { "@id" : "http://www.w3.org/ns/sosa/FeatureOfInterest"},
-            { "@id" : "http://www.w3.org/ns/sosa/Sample"}
+            { "@id" : "http://www.w3.org/ns/sosa/Sample"},
+            { "@id" : "http://www.w3.org/ns/sosa/Sampler"}
           ]
         }
       },
@@ -279,14 +320,128 @@
         "@type" : "Class",
         "unionOf" : {
           "@list" : [
-            { "@id" : "http://stream-ontology.com/matvoc#Formula"},
+            { "@id" : "http://stream-ontology.com/matvoc-core/Formula"},
             { "@id" : "http://www.w3.org/ns/sosa/FeatureOfInterest"},
-            { "@id" : "http://www.w3.org/ns/sosa/Sample"}
+            { "@id" : "http://www.w3.org/ns/sosa/Sample"},
+            { "@id" : "http://www.w3.org/ns/sosa/Sampler"}
           ]
         }
       },
       "range": "http://labs.sparna.fr/sparnatural-demo-dbpedia/onto#Search",
       "sparqlString": "rdfs:label|rdfs:comment"
+    },
+    {
+      "@id" : "http://https://nomad-coe.eu/ontology#has_calc_hash",
+      "@type" : "ObjectProperty",
+      "subPropertyOf" : "sparnatural:SearchProperty",
+      "label": [
+        {"@value" : "has calc hash","@language" : "en"}
+      ],
+      "tooltip": [
+        {"@value" : "The hash which is part of the identification of a NOMAD dataset.","@language" : "en"}
+      ],
+      "domain": "http://www.w3.org/ns/sosa/Sample",
+      "range": "http://labs.sparna.fr/sparnatural-demo-dbpedia/onto#Text",
+      "enableNegation": false
+    },
+    {
+      "@id" : "http://https://nomad-coe.eu/ontology#has_calc_id",
+      "@type" : "ObjectProperty",
+      "subPropertyOf" : "sparnatural:SearchProperty",
+      "label": [
+        {"@value" : "has calc id","@language" : "en"}
+      ],
+      "tooltip": [
+        {"@value" : "The id which is part of the identification of a NOMAD dataset.","@language" : "en"}
+      ],
+      "domain": "http://www.w3.org/ns/sosa/Sample",
+      "range": "http://labs.sparna.fr/sparnatural-demo-dbpedia/onto#Text",
+      "enableNegation": false
+    },
+    {
+      "@id" : "http://https://nomad-coe.eu/ontology#has_upload_id",
+      "@type" : "ObjectProperty",
+      "subPropertyOf" : "sparnatural:SearchProperty",
+      "label": [
+        {"@value" : "has upload id","@language" : "en"}
+      ],
+      "tooltip": [
+        {"@value" : "The upload id of a NOMAD dataset.","@language" : "en"}
+      ],
+      "domain": "http://www.w3.org/ns/sosa/Sample",
+      "range": "http://labs.sparna.fr/sparnatural-demo-dbpedia/onto#Text",
+      "enableNegation": false
+    },
+    {
+      "@id" : "http://www.w3.org/ns/sosa/hasResult",
+      "@type" : "ObjectProperty",
+      "subPropertyOf" : "sparnatural:ListProperty",
+      "datasource": "datasources:list_rdfslabel_alpha",
+      "label": [
+        {"@value" : "has result","@language" : "en"}
+      ],
+      "tooltip": [
+        {"@value" : "A Sampling has a sample as result","@language" : "en"}
+      ],
+      "domain": "http://www.w3.org/ns/sosa/Sampling",
+      "range": "http://www.w3.org/ns/sosa/Sample",
+      "enableNegation": true
+    },
+    {
+      "@id" : "http://https://nomad-coe.eu/ontology#has_basis_set",
+      "@type" : "ObjectProperty",
+      "subPropertyOf" : "sparnatural:ListProperty",
+      "label": [
+        {"@value" : "has basic set","@language" : "en"}
+      ],
+      "tooltip": [
+        {"@value" : ".","@language" : "en"}
+      ],
+      "domain": "http://www.w3.org/ns/sosa/Sampling",
+      "range": "http://labs.sparna.fr/sparnatural-demo-dbpedia/onto#Text",
+      "enableNegation": false
+    },
+    {
+      "@id" : "http://https://nomad-coe.eu/ontology#has_code_name",
+      "@type" : "ObjectProperty",
+      "subPropertyOf" : "sparnatural:SearchProperty",
+      "label": [
+        {"@value" : "has code name","@language" : "en"}
+      ],
+      "tooltip": [
+        {"@value" : ".","@language" : "en"}
+      ],
+      "domain": "http://www.w3.org/ns/sosa/Sampling",
+      "range": "http://labs.sparna.fr/sparnatural-demo-dbpedia/onto#Text",
+      "enableNegation": false
+    },
+    {
+      "@id" : "http://https://nomad-coe.eu/ontology#has_compound_type",
+      "@type" : "ObjectProperty",
+      "subPropertyOf" : "sparnatural:ListProperty",
+      "label": [
+        {"@value" : "has compound type","@language" : "en"}
+      ],
+      "tooltip": [
+        {"@value" : ".","@language" : "en"}
+      ],
+      "domain": "http://www.w3.org/ns/sosa/Sampling",
+      "range": "http://labs.sparna.fr/sparnatural-demo-dbpedia/onto#Text",
+      "enableNegation": false
+    },
+    {
+      "@id" : "http://www.w3.org/ns/sosa/madeBySampler",
+      "@type" : "ObjectProperty",
+      "subPropertyOf" : "sparnatural:ListProperty",
+      "label": [
+        {"@value" : "made by sampler","@language" : "en"}
+      ],
+      "tooltip": [
+        {"@value" : ".","@language" : "en"}
+      ],
+      "domain": "http://www.w3.org/ns/sosa/Sampling",
+      "range": "http://www.w3.org/ns/sosa/Sampler",
+      "enableNegation": true
     },
 
   ]
@@ -317,7 +472,7 @@
           backgroundBaseColor: '2,184,117',
           autocomplete : null,
           list : null,
-          defaultEndpoint: "http://localhost:8642/sparql",
+          defaultEndpoint: $('#endpoint').text(),
           sparqlPrefixes : {
             "dbpedia" : "http://dbpedia.org/ontology/"
           },
